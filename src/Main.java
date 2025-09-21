@@ -21,7 +21,7 @@ public class Main {
     private static User currentUser;
 
     public static void main(String[] args) {
-      authService.register("name", "email", "address", "password");
+
         showMainMenu();
     }
 
@@ -33,7 +33,7 @@ public class Main {
         System.out.println("1. Register");
         System.out.println("2. Login");
         System.out.println("3. Exit");
-        System.out.println("Please select an option:");
+        System.out.print("Please select an option:");
 
         String option = scanner.nextLine();
 
@@ -68,7 +68,7 @@ public class Main {
         System.out.println("9. Close account");
         System.out.println("10. Logout");
         System.out.println("11. Exit");
-        System.out.println("Please select an option:");
+        System.out.print("Please select an option:");
 
         String option = scanner.nextLine();
 
@@ -85,18 +85,45 @@ public class Main {
             case "4":
                 Withdraw();
                 break;
+            case "5":
+                Transfer();
+                break;
+            case "6":
+                transactionHistory();
+                break;
+            case "7":
+                editProfil();
+                break;
+            case "8":
+                editPassword();
+                break;
+            case "9":
+                closeAccount();
+                break;
+            case "10":
+                authService.Logout();
+                showMainMenu();
+                break;
+            case "11":
+                System.out.println("Exit");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                showLoginMenu();
+                break;
         }
     }
 
 
     public static void registerUser(){
-        System.out.println("Enter your name:");
+        System.out.print("Enter your name:");
         String name = scanner.nextLine();
-        System.out.println("Enter your email:");
+        System.out.print("Enter your email:");
         String email = scanner.nextLine();
-        System.out.println("Enter your address:");
+        System.out.print("Enter your address:");
         String address = scanner.nextLine();
-        System.out.println("Enter your password:");
+        System.out.print("Enter your password:");
         String password = scanner.nextLine();
 
         try{
@@ -109,14 +136,15 @@ public class Main {
     }
 
     public static  void loginUser(){
-        System.out.println("Enter your email:");
+        System.out.print("Enter your email:");
         String email = scanner.nextLine();
-        System.out.println("Enter your password:");
+        System.out.print("Enter your password:");
         String password = scanner.nextLine();
 
         try {
             if (!authService.login(email, password)) {
                 System.out.println("Invalid email or password!");
+                showMainMenu();
             }else{
                 System.out.println("Login successful!");
                 showLoginMenu();
@@ -135,7 +163,7 @@ public class Main {
         System.out.println("Account created successfully!");
         System.out.println("account number: " + account.getAccountId());
         System.out.println("balance: " + account.getBalance() + "$");
-
+        showLoginMenu();
     }
 
     public static void listAccounts(){
@@ -150,4 +178,51 @@ public class Main {
 
     }
 
+    public static void Transfer(){
+
+    }
+
+    public static void transactionHistory(){
+
+    }
+
+    public static void editProfil(){
+        User currentUser = authService.getCurrentUser();
+        System.out.println("Current user: " + currentUser.getName());
+        System.out.println("Current email: " + currentUser.getEmail());
+        System.out.println("Current address: " + currentUser.getAddress());
+
+        System.out.print("Enter your new username: ");
+        String newName = scanner.nextLine();
+        System.out.print("Enter your new email: ");
+        String newEmail = scanner.nextLine();
+        System.out.print("Enter your new address: ");
+        String newAddress = scanner.nextLine();
+
+        authService.editProfile(newName, newEmail, newAddress);
+        System.out.println("Profile updated successfully!");
+        showLoginMenu();
+    }
+
+    public static void editPassword(){
+
+            User currentUser = authService.getCurrentUser();
+
+            System.out.println("Old password: ");
+            String oldPassword = scanner.nextLine();
+            if(currentUser.getPassword().equals(oldPassword)){
+                System.out.println("New password :");
+                String newPassword = scanner.nextLine();
+                authService.editPassword(oldPassword, newPassword);
+                System.out.println("Password updated successfully!");
+                showLoginMenu();
+            }else{
+                System.out.println("Old password does not match!");
+                showLoginMenu();
+            }
+    }
+
+    public static void closeAccount(){
+
+    }
 }

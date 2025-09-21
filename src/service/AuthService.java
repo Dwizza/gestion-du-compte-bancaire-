@@ -49,4 +49,30 @@ public class AuthService
 
     }
 
+    public boolean editProfile(String newName, String newEmail, String newAddress) {
+        if(userRepository.emailExists(newEmail)) {
+            throw new RuntimeException("User with this email already exists!");
+        }
+        Optional<User> user = userRepository.findByEmail(currentUser.getEmail());
+        if(user.isPresent()) {
+            currentUser.setName(newName);
+            currentUser.setEmail(newEmail);
+            currentUser.setAddress(newAddress);
+            userRepository.save(currentUser);
+        }
+        return true;
+    }
+
+    public boolean editPassword(String oldPassword, String newPassword) {
+        Optional<User> user = userRepository.findByEmail(currentUser.getEmail());
+        if(user.get().getPassword().equals(oldPassword)) {
+            currentUser.setPassword(newPassword);
+            userRepository.save(currentUser);
+        }
+        return true;
+    }
+
+    public void Logout() {
+        this.currentUser = null;
+    }
 }
