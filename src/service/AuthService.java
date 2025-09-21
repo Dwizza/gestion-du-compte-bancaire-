@@ -8,8 +8,8 @@ import java.util.Optional;
 public class AuthService
 {
     private UserRepository userRepository ;
-    private User currentUser;
-//    private User user;
+    private static User currentUser;
+
 
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -26,17 +26,26 @@ public class AuthService
         userRepository.save(user);
         return true;
     }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
     public boolean login(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
+
+        if (email == null || password == null) {
             throw new RuntimeException("User not found!");
         }
-        if (!user.get().getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password!");
-        }
-
-//        return userRepository.findByEmail(email).filter(user ->{
-        return true;
+        return userRepository.findByEmail(email.trim().toLowerCase())
+                .filter(user -> user.getPassword().equals(password))
+                .map(user -> {
+                    this.currentUser = user;
+                    return true;
+                })
+                .orElse(false);
 
     }
 

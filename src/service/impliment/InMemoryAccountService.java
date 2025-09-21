@@ -8,7 +8,13 @@ import java.util.UUID;
 
 public class InMemoryAccountService implements AccountService
 {
-    private AccountRepository accountRepository;
+    private static AccountRepository accountRepository;
+
+
+
+    public InMemoryAccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account createAccount(UUID ownerUserId){
         String accountId = UUID.randomUUID().toString();

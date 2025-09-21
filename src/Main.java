@@ -1,20 +1,32 @@
 import model.Account;
+import model.User;
+import repository.AccountRepository;
+import repository.impliment.InMemoryAccountRepository;
 import repository.impliment.InMemoryUserRepository;
 import service.AccountService;
 import service.AuthService;
+import service.impliment.InMemoryAccountService;
 
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.UUID;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    private static final Scanner scanner = new Scanner(System.in);
-    private  static final AuthService authService = new AuthService(new InMemoryUserRepository());
-    private AccountService accountService;
+    private static Scanner scanner = new Scanner(System.in);
+    private  static AuthService authService = new AuthService(new InMemoryUserRepository());
+    private static AccountRepository accountRepository = new InMemoryAccountRepository();
+    private static AccountService accountService = new InMemoryAccountService(accountRepository);
+    private static User currentUser;
 
     public static void main(String[] args) {
       authService.register("name", "email", "address", "password");
         showMainMenu();
+    }
+
+    public Main(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     public static void showMainMenu(){
@@ -103,10 +115,12 @@ public class Main {
         String password = scanner.nextLine();
 
         try {
-            if (authService.login(email, password)) {
+            if (!authService.login(email, password)) {
+                System.out.println("Invalid email or password!");
+            }else{
                 System.out.println("Login successful!");
+                showLoginMenu();
             }
-            showLoginMenu();
         } catch (Exception e) {
             System.err.println("Login failed: " + e.getMessage());
             showMainMenu();
@@ -114,8 +128,14 @@ public class Main {
 
     }
 
+
+
     public static void createAccount(){
-//        Account account = accountService.createAccount(authService.get);
+        Account account = accountService.createAccount(authService.getCurrentUser().getId());
+        System.out.println("Account created successfully!");
+        System.out.println("account number: " + account.getAccountId());
+        System.out.println("balance: " + account.getBalance() + "$");
+
     }
 
     public static void listAccounts(){
